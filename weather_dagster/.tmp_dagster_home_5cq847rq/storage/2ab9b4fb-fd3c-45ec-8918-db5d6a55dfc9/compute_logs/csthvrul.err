@@ -1,0 +1,7 @@
+[32m2025-08-04 17:39:52 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - LOGS_CAPTURED - Started capturing logs in process (pid: 294456).
+[32m2025-08-04 17:39:52 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - query_weather_api - STEP_START - Started execution of step "query_weather_api".
+[32m2025-08-04 17:39:52 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - query_weather_api - STEP_OUTPUT - Yielded output "result" of type "dict". (Type check passed).
+[32m2025-08-04 17:39:52 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - query_weather_api - Writing file at: /home/eduardo-endo/de_projects/weather-etl/weather_dagster/.tmp_dagster_home_5cq847rq/storage/query_weather_api using PickledObjectFilesystemIOManager...
+[32m2025-08-04 17:39:53 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - query_weather_api - ASSET_MATERIALIZATION - Materialized value query_weather_api.
+[32m2025-08-04 17:39:53 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - query_weather_api - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2025-08-04 17:39:53 -0300[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 2ab9b4fb-fd3c-45ec-8918-db5d6a55dfc9 - 294456 - query_weather_api - STEP_SUCCESS - Finished execution of step "query_weather_api" in 578ms.
