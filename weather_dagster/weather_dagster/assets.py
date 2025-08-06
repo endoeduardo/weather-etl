@@ -1,13 +1,32 @@
 """First dag"""
 import requests
 import dagster as dg
-from dagster import AssetExecutionContext
+from dagster import AssetExecutionContext, Definitions
+from pymongo import MongoClient
 
 from dotenv import load_dotenv
 import os
 load_dotenv()
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
+class MongoDBConnectionResource(dg.ConfigurableResource):
+    """Resource for MongoDB connection."""
+    username: str
+    password: str
+    database: str
+    host: str
+    port: int
+
+    def mongodb_connection(self):
+        """Creates a MongoDB database connection."""
+        client = MongoClient(
+            host=self.host,
+            port=self.port,
+            username=self.username,
+            password=self.password,
+            authSource=self.database
+        )
+        return client[self.database]
 
 def get_weather_data() -> dict:
     """Fetches weather data from the OpenWeatherMap API."""
@@ -33,12 +52,18 @@ def query_weather_api() -> dict:
 
 
 @dg.asset
-def process_weather_data(context: AssetExecutionContext, query_weather_api: dict) -> dict:
-    """Processes the weather data to extract relevant information."""
+def insert_into_mongodb(
+    context: AssetExecutionContext,
+    mongodb: MongoDBConnectionResource,
+    query_weather_api: dict
+) -> None:
+    """Inserts the weather data into MongoDB."""
     weather = query_weather_api
 
     context.log.info(f"Processing weather data: {weather}")
-    return {
-        "temperature": weather.get("main", {}).get("temp"),
-        "description": weather.get("weather", [{}])[0].get("description"),
-    }
+
+    db = mongodb.mongodb_connection()
+    collection = db["weather_data"]
+
+    result = collection.insert_one(weather)
+    context.log.info(f"Inserted document with ID: {result.inserted_id}")

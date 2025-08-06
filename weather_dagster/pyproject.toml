@@ -13,6 +13,7 @@ dependencies = [
 dev = [
     "dagster-webserver",
     "pytest",
+    "pymongo==4.13.2"
 ]
 
 [build-system]
