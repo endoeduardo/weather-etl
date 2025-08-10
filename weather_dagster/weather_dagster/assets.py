@@ -1,6 +1,6 @@
 """First dag"""
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 import dagster as dg
@@ -121,37 +121,38 @@ def insert_into_postgres(
     fetch_weather_data: str,  # Ensure this asset runs after fetch_weather_data
 ) -> None:
     """Inserts the weather data into PostgreSQL."""
-    db = mongodb.mongodb_connection()
-    collection = db["weather_data"]
-
-    weather = collection.find_one(sort=[("_id", -1)])
-
-    context.log.info("Reading from MongoDB and inserting in Postgres")
+    context.log.info("Reading from Mongo and inserting in Postgres")
+    data = mongodb.mongodb_connection()["weather_data"].find(
+        {"dt": {"$gte": (datetime.now() - timedelta(minutes=15)).timestamp()}},
+        sort=[("dt", -1)]
+    )
+    if not data:
+        context.log.warning("No new weather data found.")
+        return
 
     conn = postgres.postgres_connection()
     cursor = conn.cursor()
-
-    insert_query = sql.SQL("""
-        INSERT INTO forecast (location_id, forecast_date, temperature, temperature_min, temperature_max, feels_like, condition)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """)
-    forecast_date = weather["dt"]
-    forecast_date = datetime.fromtimestamp(forecast_date)
-
     try:
-        cursor.execute(insert_query, (
-            weather["location_id"],
-            forecast_date,
-            weather["main"]["temp"],
-            weather["main"]["temp_min"],
-            weather["main"]["temp_max"],
-            weather["main"]["feels_like"],
-            weather["weather"][0]["description"]
-        ))
-
+        for weather in data:
+            cursor.execute(
+                sql.SQL("""
+                    INSERT INTO forecast (location_id, forecast_date, temperature, temperature_min, temperature_max, feels_like, condition)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """),
+                (
+                    weather["location_id"],
+                    datetime.fromtimestamp(weather["dt"]),
+                    weather["main"]["temp"],
+                    weather["main"]["temp_min"],
+                    weather["main"]["temp_max"],
+                    weather["main"]["feels_like"],
+                    weather["weather"][0]["description"]
+                )
+            )
         conn.commit()
-        cursor.close()
-        conn.close()
         context.log.info("Inserted data into PostgreSQL successfully.")
     except Exception as e:
         context.log.error(f"Error inserting data into PostgreSQL: {e}")
+    finally:
+        cursor.close()
+        conn.close()

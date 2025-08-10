@@ -18,7 +18,7 @@ INSERT INTO locations (city, state, country, latitude, longitude) VALUES
 CREATE TABLE forecast (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   location_id UUID REFERENCES locations(id),
-  forecast_date DATE,
+  forecast_date DATETIME,
   temperature DECIMAL(5,2),
   temperature_min DECIMAL(5,2),
   temperature_max DECIMAL(5,2),
