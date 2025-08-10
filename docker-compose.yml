@@ -12,3 +12,16 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     restart: unless-stopped
+  
+  postgresdb:
+    image: postgres:latest
+    container_name: postgresdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    environment:
+      POSTGRES_DB: weather_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    restart: unless-stopped
