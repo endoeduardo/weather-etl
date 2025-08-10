@@ -123,7 +123,7 @@ def insert_into_postgres(
     """Inserts the weather data into PostgreSQL."""
     context.log.info("Reading from Mongo and inserting in Postgres")
     data = mongodb.mongodb_connection()["weather_data"].find(
-        {"dt": {"$gte": (datetime.now() - timedelta(minutes=15)).timestamp()}},
+        {"dt": {"$gte": (datetime.now() - timedelta(minutes=5)).timestamp()}},
         sort=[("dt", -1)]
     )
     if not data:

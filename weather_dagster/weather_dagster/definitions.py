@@ -30,8 +30,8 @@ weather_job = define_asset_job("weather_job", selection=all_assets)
 # Schedule to run every 30 minutes
 weather_schedule = ScheduleDefinition(
     job=weather_job,
-    cron_schedule="*/30 * * * *",
-    description="Run weather ETL every 30 minutes."
+    cron_schedule="*/15 * * * *",
+    description="Run weather ETL every 15 minutes."
 )
 
 defs = Definitions(
